@@ -5,7 +5,7 @@ import lombok.Data;
 
 /**
  * sys_config
- * @author www
+ * @author 
  */
 @Data
 public class SysConfig implements Serializable {

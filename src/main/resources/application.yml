@@ -45,6 +45,11 @@ spring:
       authentication-database: admin
       username: admin
       password: abc123456
+  mail:
+    default-encoding: UTF-8
+    host: smtp.aliyun.com
+    username: 15027128561@aliyun.com
+    password: ww++517328
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
@@ -56,10 +61,31 @@ mybatis:
 logging:
   level:
     root: info
-    # �����־�ļ���
+    # 日志级别
     com.wei.emos.wx.db.dao : warn
   pattern:
     console: "%d{HH:mm:ss}  %-5level  %msg%n"
+
+emos:
+  jwt:
+    # 密钥
+    secret: abc123456
+    # 令牌过期时间
+    expire: 5
+    # 令牌的缓冲时间
+    cache-expire: 10
+  face:
+    createFaceModelUrl: http://192.168.0.7:3000/create_face_model
+    checkinUrl: http://192.168.0.7:3000/checkin
+  email:
+    system: 15027128561@aliyun.com
+    hr: 2076084350@qq.com
+  image-folder: E:/javaSystem/emos/image
+  code: FA7FF7549DD06D82
+
+wx:
+  app-id: wx8ac4c726f1a30c25
+  app-secret: 0cbdf7ad0e92e068742cbd58616c7da5
 
 
 
