@@ -5,15 +5,10 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface TbCityDao {
-    int deleteByPrimaryKey(Integer id);
-
-    int insert(TbCity record);
-
-    int insertSelective(TbCity record);
-
-    TbCity selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(TbCity record);
-
-    int updateByPrimaryKey(TbCity record);
+    /**
+     * 根据城市名称查找城市code，比如  荆州市 --->> jingzhou
+     * @param city
+     * @return
+     */
+    String searchCode(String city);
 }

@@ -3,17 +3,15 @@ package com.wei.emos.wx.db.dao;
 import com.wei.emos.wx.db.pojo.TbHolidays;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 @Mapper
 public interface TbHolidaysDao {
-    int deleteByPrimaryKey(Integer id);
+    public Integer searchTodayIsHolidays();
 
-    int insert(TbHolidays record);
-
-    int insertSelective(TbHolidays record);
-
-    TbHolidays selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(TbHolidays record);
-
-    int updateByPrimaryKey(TbHolidays record);
+    /**
+     * 查找对应的时间间隔内是否是节假日
+     */
+    public ArrayList<String> searchHolidaysInRange(HashMap param);
 }

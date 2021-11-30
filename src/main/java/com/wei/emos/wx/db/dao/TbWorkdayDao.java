@@ -3,17 +3,15 @@ package com.wei.emos.wx.db.dao;
 import com.wei.emos.wx.db.pojo.TbWorkday;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 @Mapper
 public interface TbWorkdayDao {
-    int deleteByPrimaryKey(Integer id);
+    public Integer searchTodayIsWorkday();
 
-    int insert(TbWorkday record);
-
-    int insertSelective(TbWorkday record);
-
-    TbWorkday selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(TbWorkday record);
-
-    int updateByPrimaryKey(TbWorkday record);
+    /**
+     * 查找对应的时间内是否是工作日
+     */
+    public ArrayList<String> searchWorkdayInRange(HashMap param);
 }

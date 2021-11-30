@@ -48,6 +48,7 @@ public class SwaggerConfig {
         // 存储用户必须提交的参数
         List<ApiKey> apiKey = new ArrayList<>();
         // 规定用户需要输入什么参数
+        // 在swagger页面中显示认证页面
         apiKey.add(new ApiKey("token", "token", "header"));
         docket.securitySchemes(apiKey);
 

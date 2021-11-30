@@ -1,87 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wei.emos.wx.db.dao.TbUserDao">
-  <resultMap id="BaseResultMap" type="com.wei.emos.wx.db.pojo.TbUser">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="param_key" jdbcType="VARCHAR" property="paramKey" />
-    <result column="param_value" jdbcType="VARCHAR" property="paramValue" />
-    <result column="status" jdbcType="BOOLEAN" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    id, param_key, param_value, `status`, remark
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from sys_config
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from sys_config
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wei.emos.wx.db.pojo.TbUser" useGeneratedKeys="true">
-    insert into sys_config (param_key, param_value, `status`, 
-      remark)
-    values (#{paramKey,jdbcType=VARCHAR}, #{paramValue,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, 
-      #{remark,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wei.emos.wx.db.pojo.TbUser" useGeneratedKeys="true">
-    insert into sys_config
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="paramKey != null">
-        param_key,
-      </if>
-      <if test="paramValue != null">
-        param_value,
-      </if>
-      <if test="status != null">
-        `status`,
-      </if>
-      <if test="remark != null">
-        remark,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="paramKey != null">
-        #{paramKey,jdbcType=VARCHAR},
-      </if>
-      <if test="paramValue != null">
-        #{paramValue,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=BOOLEAN},
-      </if>
-      <if test="remark != null">
-        #{remark,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wei.emos.wx.db.pojo.TbUser">
-    update sys_config
-    <set>
-      <if test="paramKey != null">
-        param_key = #{paramKey,jdbcType=VARCHAR},
-      </if>
-      <if test="paramValue != null">
-        param_value = #{paramValue,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null">
-        `status` = #{status,jdbcType=BOOLEAN},
-      </if>
-      <if test="remark != null">
-        remark = #{remark,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.wei.emos.wx.db.pojo.TbUser">
-    update sys_config
-    set param_key = #{paramKey,jdbcType=VARCHAR},
-      param_value = #{paramValue,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=BOOLEAN},
-      remark = #{remark,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+    <select id="haveRootUser" resultType="boolean">
+        SELECT IF(COUNT(*), TRUE, FALSE)
+        FROM tb_user
+        WHERE root = 1
+    </select>
+    
+    <select id="searchIdOpenId" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from tb_user where open_id = #{openId} and status = 1
+    </select>
+    
+    <select id="searchUserPermissions" parameterType="int" resultType="String">
+        SELECT p.permission_name
+        from tb_user u
+                 join tb_role r on JSON_CONTAINS(u.role, cast(r.id AS char))
+                 join tb_permission p on JSON_CONTAINS(r.permissions,cast(p.id AS char))
+        where u.id = #{userId} and u.status = 1
+    </select>
+
+    <select id="searchByOpenId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select id from tb_user where open_id = #{openId} and status = 1
+    </select>
+    
+    <select id="searchById" parameterType="int" resultType="com.wei.emos.wx.db.pojo.TbUser">
+        select id, open_id, nickname, photo, name, sex, tel, role, root, dept_id, status, create_time
+        from tb_user
+        where id = #{userId} and status = 1
+    </select>
+    <select id="searchNameAndDept" parameterType="int" resultType="java.util.HashMap">
+        select u.name, d.dept_name
+        from tb_user u left join tb_dept d on u.dept_id = d.id
+        where u.id = #{userId} and u.status = 1
+    </select>
+
+    <insert id="insert" parameterType="java.util.HashMap">
+        INSERT INTO tb_user
+        SET
+        <if test="openId!=null">
+            open_id = #{openId},
+        </if>
+        <if test="nickname!=null">
+            nickname = #{nickname},
+        </if>
+        <if test="photo!=null">
+            photo = #{photo},
+        </if>
+        <if test="name!=null">
+            name = #{name},
+        </if>
+        <if test="sex!=null">
+            sex = #{sex},
+        </if>
+        <if test="tel!=null">
+            tel = #{tel},
+        </if>
+        <if test="email!=null">
+            email=#{email},
+        </if>
+        <if test="hiredate!=null">
+            hiredate = #{hiredate},
+        </if>
+        role = #{role},
+        root = #{root},
+        <if test="deptName!=null">
+            dept_id = ( SELECT id FROM tb_dept WHERE dept_name = #{deptName} ),
+        </if>
+        status = #{status},
+        create_time = #{createTime}
+    </insert>
+
+    <select id="searchUserHiredate" parameterType="int" resultType="String">
+        select
+        hiredate
+        from tb_user
+        where id = #{userId} and status = 1
+    </select>
+
+    <select id="searchUserSummary" parameterType="int" resultType="HashMap">
+        SELECT u.name, u.photo, d.dept_name AS deptName
+        FROM tb_user u LEFT JOIN tb_dept d ON u.dept_id=d.id
+        WHERE u.id=#{userId} AND u.status = 1
+    </select>
 </mapper>

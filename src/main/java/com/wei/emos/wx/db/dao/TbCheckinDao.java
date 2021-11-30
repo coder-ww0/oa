@@ -3,17 +3,29 @@ package com.wei.emos.wx.db.dao;
 import com.wei.emos.wx.db.pojo.TbCheckin;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 @Mapper
 public interface TbCheckinDao {
-    int deleteByPrimaryKey(Integer id);
+    public Integer haveCheckin(HashMap param);
 
-    int insert(TbCheckin record);
+    public void insert(TbCheckin entity);
 
-    int insertSelective(TbCheckin record);
+    /**
+     * 查询基本的用户信息，比如名字，部门，签到时间等
+     * @param userId
+     * @return
+     */
+    public HashMap searchTodayCheckin(int userId);
 
-    TbCheckin selectByPrimaryKey(Integer id);
+    /**
+     * 签到的总次数
+     */
+    public long searchCheckinDays(int userId);
 
-    int updateByPrimaryKeySelective(TbCheckin record);
-
-    int updateByPrimaryKey(TbCheckin record);
+    /**
+     * 查询对应的状态
+     */
+    public ArrayList<HashMap> searchWeekCheckin(HashMap param);
 }
