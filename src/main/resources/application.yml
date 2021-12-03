@@ -82,6 +82,10 @@ emos:
     hr: 2076084350@qq.com
   image-folder: E:/javaSystem/emos/image
   code: FA7FF7549DD06D82
+  recieveNotify: http://192.168.0.7:8080/emos-wx-api/meeting/recieveNotify
+
+workflow:
+  url: http://192.168.0.7:9090/emos-workflow
 
 wx:
   app-id: wx8ac4c726f1a30c25

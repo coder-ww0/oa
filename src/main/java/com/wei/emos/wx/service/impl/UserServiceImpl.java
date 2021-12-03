@@ -1,12 +1,16 @@
 package com.wei.emos.wx.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.wei.emos.wx.db.dao.TbDeptDao;
 import com.wei.emos.wx.db.dao.TbUserDao;
+import com.wei.emos.wx.db.pojo.MessageEntity;
 import com.wei.emos.wx.db.pojo.TbUser;
 import com.wei.emos.wx.exception.EmosException;
 import com.wei.emos.wx.service.UserService;
+import com.wei.emos.wx.task.MessageTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.PushbackReader;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author www
@@ -35,6 +37,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TbUserDao userDao;
+
+    @Autowired
+    private MessageTask messageTask;
+
+    @Autowired
+    private TbDeptDao deptDao;
 
     private String getOpenId(String code) {
         // 根据微信传来的code，返回openid
@@ -72,6 +80,16 @@ public class UserServiceImpl implements UserService {
                 param.put("root", true);
                 userDao.insert(param);
                 int id = userDao.searchIdOpenId(openId);
+
+                // 编写rabbitmq的相关测试代码
+                MessageEntity entity = new MessageEntity();
+                entity.setSenderId(0);
+                entity.setSenderName("系统消息");
+                entity.setUuid(IdUtil.simpleUUID());
+                entity.setMsg("欢迎注册成为超级管理员，请及时更新你的员工个人信息");
+                entity.setSendTime(new Date());
+                messageTask.sendAsync(id + "", entity);
+
                 return id;
             } else{
                 // 如果root已经绑定了，就抛出异常
@@ -102,6 +120,7 @@ public class UserServiceImpl implements UserService {
             throw new EmosException("账户不存在");
         }
         // TODO 从消息队列中接受消息，转移到消息表
+        messageTask.receiveAysnc(id + "");
         return id;
     }
 
@@ -137,5 +156,29 @@ public class UserServiceImpl implements UserService {
     public HashMap searchUserSummary(int userId) {
         HashMap map = userDao.searchUserSummary(userId);
         return map;
+    }
+
+    @Override
+    public ArrayList<HashMap> searchUserGroupByDept(String keyword) {
+        ArrayList<HashMap> list_1 = deptDao.searchDeptMembers(keyword);
+        ArrayList<HashMap> list_2 = userDao.searchUserGroupByDept(keyword);
+        for (HashMap map_1 : list_1) {
+            long deptId = (Long) map_1.get("id");
+            ArrayList members = new ArrayList();
+            for (HashMap map_2 : list_2) {
+                long id = (long) map_2.get("deptId");
+                if (deptId == id) {
+                    members.add(map_2);
+                }
+            }
+            map_1.put("members", members);
+        }
+        return list_1;
+    }
+
+    @Override
+    public ArrayList<HashMap> searchMembers(List param) {
+        ArrayList<HashMap> list = userDao.searchMembers(param);
+        return list;
     }
 }

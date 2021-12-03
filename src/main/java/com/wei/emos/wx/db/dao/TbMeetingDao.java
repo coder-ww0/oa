@@ -2,18 +2,27 @@ package com.wei.emos.wx.db.dao;
 
 import com.wei.emos.wx.db.pojo.TbMeeting;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.shiro.crypto.hash.Hash;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Mapper
 public interface TbMeetingDao {
-    int deleteByPrimaryKey(Integer id);
 
-    int insert(TbMeeting record);
+    public int insertMeeting(TbMeeting tbMeeting);
 
-    int insertSelective(TbMeeting record);
+    public ArrayList<HashMap> searchMyMeetingListByPage(HashMap param);
 
-    TbMeeting selectByPrimaryKey(Integer id);
+    public boolean searchMeetingMembersInSameDept(String uuid);
 
-    int updateByPrimaryKeySelective(TbMeeting record);
+    public int updateMeetingInstanceId(HashMap map);
 
-    int updateByPrimaryKey(TbMeeting record);
+    public HashMap searchMeetingById(int id);
+
+    public ArrayList<HashMap> searchMeetingMembers(int id);
+
+    public int updateMeetingInfo(HashMap param);
+
+    public int deleteMeetingById(int id);
 }

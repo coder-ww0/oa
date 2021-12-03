@@ -2,6 +2,7 @@ package com.wei.emos.wx.db.dao;
 
 import com.wei.emos.wx.db.pojo.TbHolidays;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;

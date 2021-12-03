@@ -3,13 +3,16 @@ package com.wei.emos.wx.db.dao;
 import com.wei.emos.wx.db.pojo.TbUser;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 @Mapper
 public interface TbUserDao {
     /**
      * 判断是root用户个数，如果存在root用户返回true，如果没有，返回false
+     *
      * @return boolean
      */
     public boolean haveRootUser();
@@ -26,6 +29,7 @@ public interface TbUserDao {
 
     /**
      * 找出用户所拥有的全部权限
+     *
      * @param userId
      * @return
      */
@@ -47,8 +51,19 @@ public interface TbUserDao {
 
     /**
      * 个人中心的查看，照片以及部门
+     *
      * @param userId
      * @return
      */
     public HashMap searchUserSummary(int userId);
+
+    public ArrayList<HashMap> searchUserGroupByDept(String keyword);
+
+    public ArrayList<HashMap> searchMembers(List param);
+
+    public HashMap searchUserInfo(int userId);
+
+    public int searchDeptManagerId(int id);
+
+    public int searchGmId();
 }
