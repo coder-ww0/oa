@@ -4,6 +4,7 @@ import com.wei.emos.wx.db.pojo.TbMeeting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author www
@@ -22,4 +23,6 @@ public interface MeetingService {
     public void updateMeetingInfo(HashMap param);
 
     public void deleteMeetingById(int id);
+
+    public List<String> searchUserMeetingInMonth(HashMap param);
 }

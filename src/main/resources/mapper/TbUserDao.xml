@@ -142,4 +142,14 @@
                  JOIN tb_role r ON JSON_CONTAINS(u.role, CAST(r.id AS CHAR))
         WHERE r.id=1 AND u.status = 1
     </select>
+
+    <select id="selectUserPhotoAndName" parameterType="list" resultType="HashMap">
+        SELECT
+        id,name,photo
+        FROM tb_user
+        WHERE status = 1 AND id IN
+        <foreach collection="list" open="(" close=")" item="one" separator=",">
+            #{one}
+        </foreach>
+    </select>
 </mapper>

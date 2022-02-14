@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author www
@@ -150,6 +151,12 @@ public class MeetingServiceImpl implements MeetingService {
             log.error("删除工作流失败");
             throw new EmosException("删除工作流失败");
         }
+    }
+
+    @Override
+    public List<String> searchUserMeetingInMonth(HashMap param) {
+        List list=meetingDao.searchUserMeetingInMonth(param);
+        return list;
     }
 
     private void startMeetingWorkflow(String uuid, int creatorId, String date, String start) {

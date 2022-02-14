@@ -6,6 +6,7 @@ import org.apache.shiro.crypto.hash.Hash;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Mapper
 public interface TbMeetingDao {
@@ -25,4 +26,6 @@ public interface TbMeetingDao {
     public int updateMeetingInfo(HashMap param);
 
     public int deleteMeetingById(int id);
+
+    public List<String> searchUserMeetingInMonth(HashMap param);
 }

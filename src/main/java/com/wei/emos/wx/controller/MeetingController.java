@@ -11,6 +11,7 @@ import com.wei.emos.wx.db.pojo.TbMeeting;
 import com.wei.emos.wx.exception.EmosException;
 import com.wei.emos.wx.service.MeetingService;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author www
@@ -28,6 +30,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/meeting")
+@Slf4j
 public class MeetingController {
     @Autowired
     private JwtUtil jwtUtil;
@@ -127,5 +130,27 @@ public class MeetingController {
     public R deleteMeetingById(@Valid @RequestBody DeleteMeetingByIdForm form) {
         meetingService.deleteMeetingById(form.getId());
         return R.ok().put("result", "success");
+    }
+
+    @PostMapping("/recieveNotify")
+    @ApiOperation("接受工作流通知")
+    public R recieveNotify(@Valid @RequestBody RecieveNotifyForm form) {
+        if ("同意".equals(form.getResult())) {
+            log.debug(form.getUuid() + "的会议审批通过");
+        } else {
+            log.debug(form.getUuid() + "的会议审批不通过");
+        }
+        return R.ok();
+    }
+
+    @PostMapping("/searchUserMeetingInMonth")
+    @ApiOperation("查询某月用户的会议日期列表")
+    public R searchUserMeetingInMonth(@Valid @RequestBody SearchUserMeetingInMonthForm form, @RequestHeader("token") String token) {
+        int userId = jwtUtil.getUserId(token);
+        HashMap param = new HashMap();
+        param.put("userId", userId);
+        param.put("express", form.getYear()+"/"+form.getMonth());
+        List<String> list = meetingService.searchUserMeetingInMonth(param);
+        return R.ok().put("result", list);
     }
 }

@@ -66,4 +66,6 @@ public interface TbUserDao {
     public int searchDeptManagerId(int id);
 
     public int searchGmId();
+
+    public List<HashMap> selectUserPhotoAndName(List param);
 }

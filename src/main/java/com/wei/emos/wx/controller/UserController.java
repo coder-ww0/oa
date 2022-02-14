@@ -3,10 +3,7 @@ package com.wei.emos.wx.controller;
 import cn.hutool.json.JSONUtil;
 import com.wei.emos.wx.common.util.R;
 import com.wei.emos.wx.config.shiro.JwtUtil;
-import com.wei.emos.wx.controller.form.LoginForm;
-import com.wei.emos.wx.controller.form.RegisterForm;
-import com.wei.emos.wx.controller.form.SearchMembersForm;
-import com.wei.emos.wx.controller.form.SearchUserGroupByDeptForm;
+import com.wei.emos.wx.controller.form.*;
 import com.wei.emos.wx.exception.EmosException;
 import com.wei.emos.wx.service.UserService;
 import io.swagger.annotations.Api;
@@ -95,8 +92,21 @@ public class UserController {
         return R.ok().put("result", list);
     }
 
-    private void saveCacheToken(String token, int userId) {
+    @PostMapping("/selectUserPhotoAndName")
+    @ApiOperation("查询用户姓名和头像")
+    @RequiresPermissions(value = {"WORKFLOW:APPROVAL"})
+    public R selectUserPhotoAndName(@Valid @RequestBody SelectUserPhotoAndNameForm form) {
+        if (!JSONUtil.isJsonArray(form.getIds())) {
+            throw new EmosException("参数不是JSON数组");
+        }
+        List<Integer> param = JSONUtil.parseArray(form.getIds()).toList(Integer.class);
+        List<HashMap> list = userService.selectUserPhotoAndName(param);
+        return R.ok().put("result", list);
+    }
 
+    private void saveCacheToken(String token, int userId) {
         redisTemplate.opsForValue().set(token, userId + "", cacheExpire, TimeUnit.DAYS);
     }
+
+
 }
